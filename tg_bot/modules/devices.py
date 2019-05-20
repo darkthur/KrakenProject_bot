@@ -54,7 +54,7 @@ def getLastestBuild(codename):
     except urllib.error.HTTPError:
         return
     builds = json.loads(request.read());
-    return builds['response'][len(builds)];
+    return builds['response'][-1];
 
 def getChangelogFile(filename, codename):
     try:
