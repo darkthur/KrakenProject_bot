@@ -19,7 +19,7 @@ def command_handler(bot, update):
     res = handleMessage(update.message.text);
     if res is None:
         return
-    update.message.reply_markdown(res)
+    update.message.reply_markdown(res, disable_web_page_preview=True)
 
 def getDevices():
     request = urllib.request.urlopen(baseURL + '/devices.json')
