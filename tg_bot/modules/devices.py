@@ -20,7 +20,9 @@ def command_handler(bot, update):
     res = handleMessage(update.message.text);
     if res is None:
         return
-    update.message.reply_markdown(res[0], reply_markup=res[1], disable_web_page_preview=True)
+    update.message.reply_markdown(res[0],
+                                  reply_markup=res[1] if len(res) == 2 else None,
+                                  disable_web_page_preview=True)
 
 def getDevices():
     request = urllib.request.urlopen(baseURL + '/devices.json')
@@ -96,9 +98,7 @@ def handleMessage(msg):
     if device['maintainer_name'] is not None and build['filename'] is not None:
         # dirty place XD
         res = ("***Latest Kraken for {} ({})***\n\n".format(device['name'],device['codename'])+
-        "***Developer:*** [{}]({})\n".format(device['maintainer_name'], device['maintainer_url'])+
-        "***Website:*** [{}]({})\n".format(device['codename'] + ' Page', website + device['codename'])+
-        "***XDA:*** [{}]({})\n\n".format(device['codename'] + ' Thread', device['xda_thread'])+
+        "***Maintainer:*** [{}]({})\n\n".format(device['maintainer_name'], device['maintainer_url'])+
         "***Build:*** [{}]({})\n".format(build['filename'], build['url'])+
         "***Size:*** {}\n".format(humanSize(int(build['size'])))+
         "***Date:*** {}\n\n".format(humanDate(int(build['datetime']))))
