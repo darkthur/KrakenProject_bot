@@ -5,6 +5,7 @@ import urllib.parse
 import urllib.request
 
 from tg_bot import dispatcher
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CommandHandler
 
 baseURL = "https://raw.githubusercontent.com/KrakenProject/official_devices/master"
@@ -19,7 +20,7 @@ def command_handler(bot, update):
     res = handleMessage(update.message.text);
     if res is None:
         return
-    update.message.reply_markdown(res, disable_web_page_preview=True)
+    update.message.reply_markdown(res[0], reply_markup=res[1], disable_web_page_preview=True)
 
 def getDevices():
     request = urllib.request.urlopen(baseURL + '/devices.json')
@@ -102,11 +103,19 @@ def handleMessage(msg):
         "***Size:*** {}\n".format(humanSize(int(build['size'])))+
         "***Date:*** {}\n\n".format(humanDate(int(build['datetime']))))
 
+        kb = InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton(text="Download", url=build['url'])] +
+                [InlineKeyboardButton(text="XDA Thread", url=device['xda_thread'])] +
+                [InlineKeyboardButton(text="Builds", url=website + device['codename'])]
+            ]
+        )
+
         # ignore changelog if needed
         if changelog is not None:
             res += ("***Changelog:***\n```\n{}```".format(changelog.replace('\\n','\n')))
 
-        return res;
+        return res, kb
 
 devices_list = getDevicesList()
 
