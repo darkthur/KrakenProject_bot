@@ -20,7 +20,7 @@ def command_handler(bot, update):
     res = handleMessage(update.message.text);
     if res is None:
         return
-    update.message.reply_markdown(res[0],
+    update.message.reply_markdown(res[0] if isinstance(res, tuple) else res,
                                   reply_markup=res[1] if len(res) == 2 else None,
                                   disable_web_page_preview=True)
 
