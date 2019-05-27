@@ -56,13 +56,6 @@ def getLastestBuild(codename):
     builds = json.loads(request.read());
     return builds['response'][-1];
 
-def getChangelogFile(filename, codename):
-    try:
-        return str(urllib.request.urlopen(baseURL + '/changelog/' + codename + '/' + 
-            filename.replace('zip','txt')).read()).split("'")[1]
-    except Exception as e:
-        return None
-
 def humanSize(bytes):
     if bytes == 0:
       return "0B"
@@ -90,30 +83,26 @@ def handleMessage(msg):
     # grab device/build/changelog
     device = getDeviceInfo(msg)
     build = getLastestBuild(msg)
+
     if build is None:
         return
-    changelog = getChangelogFile(build['filename'], msg)
+
+    link = website + device['codename'] + '&build=' + build['filename']
           
     # setup the message and send
     if device['maintainer_name'] is not None and build['filename'] is not None:
         # dirty place XD
         res = ("***Latest Kraken for {} ({})***\n\n".format(device['name'],device['codename'])+
         "***Maintainer:*** [{}]({})\n\n".format(device['maintainer_name'], device['maintainer_url'])+
-        "***Build:*** [{}]({})\n".format(build['filename'], build['url'])+
+        "***Build:*** [{}]({})\n".format(build['filename'], link)+
         "***Size:*** {}\n".format(humanSize(int(build['size'])))+
         "***Date:*** {}\n\n".format(humanDate(int(build['datetime']))))
 
         kb = InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Download", url=build['url'])] +
-                [InlineKeyboardButton(text="XDA Thread", url=device['xda_thread'])] +
-                [InlineKeyboardButton(text="Builds", url=website + device['codename'])]
+                [InlineKeyboardButton(text="Download", url=link)]
             ]
         )
-
-        # ignore changelog if needed
-        if changelog is not None:
-            res += ("***Changelog:***\n```\n{}```".format(changelog.replace('\\n','\n')))
 
         return res, kb
 
