@@ -88,15 +88,15 @@ def handleMessage(msg):
         return
 
     link = website + device['codename'] + '&build=' + build['filename']
-          
+    
     # setup the message and send
     if device['maintainer_name'] is not None and build['filename'] is not None:
         # dirty place XD
         res = ("***Latest Kraken for {} ({})***\n\n".format(device['name'],device['codename'])+
-        "***Maintainer:*** [{}]({})\n\n".format(device['maintainer_name'], device['maintainer_url'])+
         "***Build:*** [{}]({})\n".format(build['filename'], link)+
         "***Size:*** {}\n".format(humanSize(int(build['size'])))+
-        "***Date:*** {}\n\n".format(humanDate(int(build['datetime']))))
+        "***Date:*** {}\n".format(humanDate(int(build['datetime'])))+
+        "***Maintainer:*** [{}]({})\n\n".format(device['maintainer_name'], device['maintainer_url']))
 
         kb = InlineKeyboardMarkup(
             [
